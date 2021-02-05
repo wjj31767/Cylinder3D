@@ -1,0 +1,81 @@
+# This file is covered by the LICENSE file in the root of this project.
+labels: 
+  0 : "unlabeled"
+  100: "clear"
+  101: "rain"
+  102: "fog"
+color_map: # bgr
+  0 : [0, 0, 0]
+  100 : [0, 0, 255]
+  101: [245, 150, 100]
+  102: [245, 230, 100]
+content: # as a ratio with the total number of points
+  0: 0.02
+  100: 0.8
+  101: 0.18
+  102: 0.18
+# classes that are indistinguishable from single scan or inconsistent in
+# ground truth are mapped to their closest equivalent
+learning_map:
+  0 : 0     # "unlabeled"
+  100 : 1     # "outlier" mapped to "unlabeled" --------------------------mapped
+  101: 2     # "car"
+  102: 3     # "bicycle"
+learning_map_inv: # inverse of previous map
+  0: 0      # "unlabeled", and others ignored
+  1: 100     # "car"
+  2: 101
+  3: 102 # "bicycle"
+learning_ignore: # Ignore classes
+  0: True      # "unlabeled", and others ignored
+  1: False     # "car"
+  2: False     # "bicycle"
+  3: False
+split: # sequence numbers
+  train:
+    - train_01/2018-11-29_145021_Static1-Day-Clear
+    - train_01/2018-11-29_151031_Static1-Day-FogB
+    - train_01/2018-11-29_152024_Static1-Day-FogC
+    - train_01/2018-11-29_154253_Static1-Day-Rain15
+    - train_01/2018-11-29_154749_Static1-Day-Rain55
+    - train_01/2018-11-29_155041_Static1-Day-Rain33
+    - train_01/2018-11-29_161730_Static1-Clear
+    - train_01/2018-11-29_162735_Static1-FogA
+    - train_01/2018-11-29_165549_Static1-FogC
+    - train_01/2018-11-29_171723_Static1-Rain55
+    - train_01/2018-11-29_172016_Static1-Rain33
+    - train_02/2018-11-28_104809_Static4-Clear
+    - train_02/2018-11-28_112851_Static4-FogA
+    - train_02/2018-11-28_114357_Static4-FogB
+    - train_02/2018-11-28_115543_Static4-FogC
+    - train_02/2018-11-28_121700_Static4-Rain15
+    - train_02/2018-11-28_121948_Static4-Rain55
+    - train_02/2018-11-28_122325_Static4-Rain33
+    - train_02/2018-11-28_142655_Static4-Day-Rain15
+    - train_02/2018-11-28_142946_Static4-Day-Rain55
+    - train_02/2018-11-28_143235_Static4-Day-Rain33
+  valid:
+    - val_01/2018-11-28_155119_Static3-Day-FogA
+    - val_01/2018-11-28_164422_Static3-Day-Rain15
+    - val_01/2018-11-28_164716_Static3-Day-Rain55
+    - val_01/2018-11-28_165045_Static3-Day-Rain33
+    - val_01/2018-11-28_181248_Static3-Clear
+    - val_01/2018-11-28_182204_Static3-FogA
+    - val_01/2018-11-28_183705_Static3-FogB
+    - val_01/2018-11-28_191246_Static3-Rain15
+    - val_01/2018-11-28_191431_Static3-Rain15
+    - val_01/2018-11-28_191718_Static3-Rain55
+    - val_01/2018-11-28_192224_Static3-Rain33
+  test:
+    - test_01/2018-11-29_101343_Static2-Clear
+    - test_01/2018-11-29_102719_Static2-FogA
+    - test_01/2018-11-29_104141_Static2-FogB
+    - test_01/2018-11-29_105634_Static2-FogC
+    - test_01/2018-11-29_111451_Static2-Rain15
+    - test_01/2018-11-29_111818_Static2-Rain55
+    - test_01/2018-11-29_112220_Static2-Rain33
+    - test_01/2018-11-29_114626_Static2-Day-Clear
+    - test_01/2018-11-29_121256_Static2-Day-FogC
+    - test_01/2018-11-29_123336_Static2-Day-Rain15
+    - test_01/2018-11-29_123641_Static2-Day-Rain55
+    - test_01/2018-11-29_123926_Static2-Day-Rain33
