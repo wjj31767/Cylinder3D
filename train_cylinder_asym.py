@@ -94,12 +94,9 @@ def main(args):
                         val_label_tensor = val_vox_label.type(torch.LongTensor).to(pytorch_device)
 
                         predict_labels = my_model(val_pt_fea_ten, val_grid_ten, val_batch_size)
-                        print("softmax",torch.nn.functional.softmax(predict_labels).detach().shape)
                         # aux_loss = loss_fun(aux_outputs, point_label_tensor)
                         loss = lovasz_softmax(torch.nn.functional.softmax(predict_labels).detach(), val_label_tensor,
                                               ignore=0) + loss_func(predict_labels.detach(), val_label_tensor)
-                        print("lossfunc",loss_func(predict_labels.detach(),val_label_tensor).shape)
-                        print("loss",loss.shape)
                         predict_labels = torch.argmax(predict_labels, dim=1)
                         predict_labels = predict_labels.cpu().detach().numpy()
                         for count, i_val_grid in enumerate(val_grid):
