@@ -410,12 +410,12 @@ def collate_fn_BEV_test(data):
     return torch.from_numpy(data2stack), torch.from_numpy(label2stack), grid_ind_stack, point_label, xyz, index
 
 if __name__ == "__main__":
-    from pc_dataset import SemKITTI_sk
-    in_dataset = SemKITTI_sk(r"/home/jinwei/SemanticKitti/dataset/sequences",label_mapping="/mrtstorage/users/jinwei/Cylinder3D/config/label_mapping/semantic-kitti.yaml")
-    dataset = cylinder_dataset(in_dataset, [480, 360, 32])
-    print(len(dataset[0]))
+#    from pc_dataset import SemKITTI_sk
+ #   in_dataset = SemKITTI_sk(r"/home/jinwei/SemanticKitti/dataset/sequences",label_mapping="/mrtstorage/users/jinwei/Cylinder3D/config/label_mapping/semantic-kitti.yaml")
+  #  dataset = cylinder_dataset(in_dataset, [480, 360, 32])
+   # print(len(dataset[0]))
     from pc_dataset import Dense
-    in_dataset = Dense(r"/home/jinwei/dense",label_mapping="/mrtstorage/users/jinwei/Cylinder3D/config/label_mapping/dense.yaml")
+    in_dataset = Dense(r"/home/jinwei/dense",label_mapping="/home/jinwei/Cylinder3D/config/label_mapping/dense.yaml")
 
     dataset = cylinder_dataset(in_dataset,[480,360,32])
     print(len(dataset[0]))

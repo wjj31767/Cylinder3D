@@ -197,12 +197,12 @@ def get_nuScenes_label_name(label_mapping):
 
 if __name__ == "__main__":
     from collections import Counter
-    data = SemKITTI_sk(r"/home/jinwei/SemanticKitti/dataset/sequences",label_mapping="/mrtstorage/users/jinwei/Cylinder3D/config/label_mapping/semantic-kitti.yaml")
-    print(data.__len__())
-    xyz, label = data[0]
-    print(xyz.shape, label.shape)
-    print(Counter(label.flatten().tolist()))
-    data = Dense(r"/home/jinwei/dense",label_mapping=r"/mrtstorage/users/jinwei/Cylinder3D/config/label_mapping/dense.yaml")
+   # data = SemKITTI_sk(r"/home/jinwei/SemanticKitti/dataset/sequences",label_mapping="/mrtstorage/users/jinwei/Cylinder3D/config/label_mapping/semantic-kitti.yaml")
+   # print(data.__len__())
+   # xyz, label = data[0]
+   # print(xyz.shape, label.shape)
+   # print(Counter(label.flatten().tolist()))
+    data = Dense(r"/home/jinwei/dense",label_mapping=r"/home/jinwei/Cylinder3D/config/label_mapping/dense.yaml")
     print(data.__len__())
     xyz,label = data[0]
     print(xyz.shape,label.shape)
