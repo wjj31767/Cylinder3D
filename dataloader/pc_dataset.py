@@ -70,7 +70,7 @@ class SemKITTI_sk(data.Dataset):
 @register_dataset
 class Dense(data.Dataset):
     def __init__(self, data_path, imageset='train',
-                 return_ref=False, label_mapping="dense.yaml", nusc=None):
+                 return_ref=True, label_mapping="dense.yaml", nusc=None):
         self.return_ref = return_ref
         with open(label_mapping, 'r') as stream:
             semkittiyaml = yaml.safe_load(stream)
@@ -113,6 +113,69 @@ class Dense(data.Dataset):
             data_tuple = (raw_data[:3,:].transpose(1,0), annotated_data.astype(np.uint8))
             if self.return_ref:
                 data_tuple += (raw_data[3, :].reshape(-1,1),)
+            return data_tuple
+
+@register_dataset
+class CycleDense(data.Dataset):
+    def __init__(self, data_path, imageset='train', clss = "clear",
+                 return_ref=True, label_mapping="cycledense.yaml", nusc=None):
+        self.return_ref = return_ref
+        with open(label_mapping, 'r') as stream:
+            semkittiyaml = yaml.safe_load(stream)
+        self.learning_map = semkittiyaml['learning_map']
+        self.imageset = imageset
+        if imageset+clss == 'trainclear':
+            split = semkittiyaml['split']['trainclear']
+        elif imageset+clss == 'trainrain':
+            split = semkittiyaml['split']['trainrain']
+        elif imageset+clss == 'trainfog':
+            split = semkittiyaml['split']['trainfog']
+        elif imageset+clss == 'valclear':
+            split = semkittiyaml['split']['valclear']
+        elif imageset+clss == 'valrain':
+            split = semkittiyaml['split']['valrain']
+        elif imageset+clss == 'valfog':
+            split = semkittiyaml['split']['valfog']
+        elif imageset+clss == 'testclear':
+            split = semkittiyaml['split']['testclear']
+        elif imageset+clss == 'testrain':
+            split = semkittiyaml['split']['testrain']
+        elif imageset+clss == 'testfog':
+            split = semkittiyaml['split']['testfog']
+        else:
+            raise Exception('Split must be train/val/test with class clear/rain/fog')
+
+        self.im_idx = []
+        for i_folder in split:
+            self.im_idx += absoluteFilePaths('/'.join([data_path, i_folder]))
+    def __len__(self):
+        'Denotes the total number of samples'
+        return len(self.im_idx)
+
+    def __getitem__(self, index):
+        with h5py.File(self.im_idx[index], "r") as f:
+            raw_data = np.dstack(
+                (np.array(
+                    f["sensorX_1"]), np.array(
+                    f["sensorY_1"]), np.array(
+                    f["sensorZ_1"]), np.array(
+                    f['distance_m_1']), np.array(
+                    f['intensity_1']), np.array(
+                    f['labels_1']
+                )))
+            raw_data = raw_data.astype(np.float32).transpose(2,0,1).reshape(6,-1)
+            # if self.imageset == 'test':
+            #     annotated_data = np.expand_dims(np.zeros_like(raw_data[:, 0], dtype=int), axis=1)
+            # else:
+            #     annotated_data = raw_data[5,:].astype(np.int32).reshape(-1,1)
+            #     annotated_data = annotated_data & 0xFFFF  # delete high 16 digits binary
+            #     annotated_data = np.vectorize(self.learning_map.__getitem__)(annotated_data)
+            # data_tuple = (raw_data[:3,:].transpose(1,0), annotated_data.astype(np.uint8))
+            data_tuple = (raw_data[:3,:].transpose(1,0),)
+
+            if self.return_ref:
+                data_tuple += (raw_data[3, :].reshape(-1,1),)
+                print(len(data_tuple))
             return data_tuple
 
 @register_dataset
@@ -202,8 +265,7 @@ if __name__ == "__main__":
    # xyz, label = data[0]
    # print(xyz.shape, label.shape)
    # print(Counter(label.flatten().tolist()))
-    data = Dense(r"/home/jinwei/dense",label_mapping=r"/home/jinwei/Cylinder3D/config/label_mapping/dense.yaml")
+    data = CycleDense(r"/home/jinwei/dense",label_mapping=r"/home/jinwei/Cylinder3D/config/label_mapping/cycledense.yaml")
     print(data.__len__())
-    xyz,label = data[0]
-    print(xyz.shape,label.shape)
-    print(Counter(label.flatten().tolist()))
+    xyz,ref = data[0]
+    print(xyz.shape,ref.shape)
