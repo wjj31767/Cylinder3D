@@ -80,7 +80,7 @@ def main(args):
         time.sleep(10)
         # lr_scheduler.step(epoch)
         for i_iter, (_, train_vox_label, train_grid, _, train_pt_fea) in enumerate(train_dataset_loader):
-            if global_iter % check_iter == 0 and epoch >= 0:
+            if global_iter % check_iter == 0 and epoch >= 1:
                 my_model.eval()
                 hist_list = []
                 val_loss_list = []

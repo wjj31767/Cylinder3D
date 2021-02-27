@@ -296,8 +296,8 @@ class Asymm_3d_spconv(nn.Module):
         up3e = self.upBlock1(up4e, down3b)
         up2e = self.upBlock2(up3e, down2b)
         up1e = self.upBlock3(up2e, down1b)
-
         up0e = self.ReconNet(up1e)
+
         up0e.features = torch.cat((up0e.features, up1e.features), 1) # dense() [4,128,480,360,32]
         logits = self.logits(up0e)
         y = logits.dense() #[4,4,480,360,32]

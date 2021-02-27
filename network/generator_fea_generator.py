@@ -68,16 +68,12 @@ class cylinder_fea(nn.Module):
         cat_pt_fea = cat_pt_fea[shuffled_ind, :]
         cat_pt_ind = cat_pt_ind[shuffled_ind, :]
 
-        # unique xy grid index
-        unq, unq_inv, unq_cnt = torch.unique(cat_pt_ind, return_inverse=True, return_counts=True, dim=0)
-        unq = unq.type(torch.int64) # X 4
 
         # process feature
         processed_cat_pt_fea = self.PPmodel(cat_pt_fea) #51200 256
-        pooled_data = torch_scatter.scatter_max(processed_cat_pt_fea, unq_inv, dim=0)[0]
         if self.fea_compre:
-            processed_pooled_data = self.fea_compression(pooled_data) # X 16
+            processed_pooled_data = self.fea_compression(processed_cat_pt_fea) # X 16
         else:
-            processed_pooled_data = pooled_data
+            processed_pooled_data = processed_cat_pt_fea
 
-        return unq, processed_pooled_data
+        return cat_pt_ind, processed_pooled_data

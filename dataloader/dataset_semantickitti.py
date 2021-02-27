@@ -241,23 +241,17 @@ class cylinder_dataset(data.Dataset):
         crop_range = max_bound - min_bound
         cur_grid_size = self.grid_size
         intervals = crop_range / (cur_grid_size - 1)
-
-        if (intervals == 0).any(): print("Zero interval!")
-        grid_ind = (np.floor((np.clip(xyz_pol, min_bound, max_bound) - min_bound) / intervals)).astype(np.int)
-
+        grid_ind = (np.floor((np.clip(xyz_pol, min_bound, max_bound) - min_bound) / intervals)).astype(np.int) # [12800,3]
         voxel_position = np.zeros(self.grid_size, dtype=np.float32)
         dim_array = np.ones(len(self.grid_size) + 1, int)
-        dim_array[0] = -1
-        voxel_position = np.indices(self.grid_size) * intervals.reshape(dim_array) + min_bound.reshape(dim_array)
+        dim_array[0] = -1 # dim_array = [-1,1,1,1]
+        voxel_position = np.indices(self.grid_size) * intervals.reshape(dim_array) + min_bound.reshape(dim_array) # voxel_positions :[3,grid_size]
         voxel_position = polar2cat(voxel_position)
-
-        processed_label = np.ones(self.grid_size, dtype=np.uint8) * self.ignore_label
-        print(processed_label)
-        label_voxel_pair = np.concatenate([grid_ind, labels], axis=1)
+        processed_label = np.ones(self.grid_size, dtype=np.uint8) * self.ignore_label# grid_size with 0
+        label_voxel_pair = np.concatenate([grid_ind, labels], axis=1) # 12800 4
         label_voxel_pair = label_voxel_pair[np.lexsort((grid_ind[:, 0], grid_ind[:, 1], grid_ind[:, 2])), :]
         processed_label = nb_process_label(np.copy(processed_label), label_voxel_pair)
         data_tuple = (voxel_position, processed_label)
-
         # center data on each voxel for PTnet
         voxel_centers = (grid_ind.astype(np.float32) + 0.5) * intervals + min_bound
         return_xyz = xyz_pol - voxel_centers
@@ -266,7 +260,6 @@ class cylinder_dataset(data.Dataset):
             return_fea = return_xyz
         elif len(data) == 3:
             return_fea = np.concatenate((return_xyz, sig[..., np.newaxis]), axis=1)
-
         if self.return_test:
             data_tuple += (grid_ind, labels, return_fea, index)
         else:
@@ -344,11 +337,12 @@ class polar_dataset(data.Dataset):
 
         if (intervals == 0).any(): print("Zero interval!")
         grid_ind = (np.floor((np.clip(xyz_pol, min_bound, max_bound) - min_bound) / intervals)).astype(np.int)
-
         voxel_position = np.zeros(self.grid_size, dtype=np.float32)
         dim_array = np.ones(len(self.grid_size) + 1, int)
         dim_array[0] = -1
+        print(dim_array.shape)
         voxel_position = np.indices(self.grid_size) * intervals.reshape(dim_array) + min_bound.reshape(dim_array)
+        print(voxel_position.shape)
         voxel_position = polar2cat(voxel_position)
 
         processed_label = np.ones(self.grid_size, dtype=np.uint8) * self.ignore_label
@@ -378,7 +372,7 @@ class polar_dataset(data.Dataset):
 @nb.jit('u1[:,:,:](u1[:,:,:],i8[:,:])', nopython=True, cache=True, parallel=False)
 def nb_process_label(processed_label, sorted_label_voxel_pair):
     label_size = 256
-    counter = np.zeros((label_size,), dtype=np.uint16)
+    counter = np.zeros((label_size,), dtype=np.uint16)# 256
     counter[sorted_label_voxel_pair[0, 3]] = 1
     cur_sear_ind = sorted_label_voxel_pair[0, :3]
     for i in range(1, sorted_label_voxel_pair.shape[0]):
@@ -420,3 +414,4 @@ if __name__ == "__main__":
 
     dataset = cylinder_dataset(in_dataset,[480,360,32])
     print(len(dataset[0]))
+

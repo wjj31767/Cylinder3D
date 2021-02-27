@@ -21,13 +21,13 @@ model_params:
 
 ###################
 ## Dataset options
-dataset_params:
+dataset_paramsA:
   dataset_type: "cylinder_dataset"
-  pc_dataset_type: "Dense"
+  pc_dataset_type: "CycleDense"
   ignore_label: 0
   return_test: False
   fixed_volume_space: False
-  label_mapping: "./config/label_mapping/dense.yaml"
+  label_mapping: "./config/label_mapping/cycledense.yaml"
   max_volume_space:
     - 50
     - 3.1415926
@@ -40,28 +40,33 @@ dataset_params:
 
 ###################
 ## Data_loader options
-train_data_loader:
+train_data_loaderA:
   data_path: "/home/jinwei/dense"
   imageset: "train"
+  clss: "clear"
   return_ref: True
-  batch_size: 1
+  batch_size: 2
   shuffle: True
   num_workers: 4
 
-val_data_loader:
+
+train_data_loaderB:
   data_path: "/home/jinwei/dense"
-  imageset: "val"
+  imageset: "train"
+  clss: "rain"
   return_ref: True
-  batch_size: 1
-  shuffle: False
+  batch_size: 2
+  shuffle: True
   num_workers: 4
 
 
 ###################
 ## Train params
 train_params:
-  model_load_path: "/home/jinwei/Cylinder3D/model/model_save1.pt"
-  model_save_path: "/home/jinwei/Cylinder3D/model/model_save1.pt"
+  modelA2B_load_path: "/home/jinwei/Cylinder3D/model/modelA2B.pt"
+  modelB2A_load_path: "/home/jinwei/Cylinder3D/model/modelB2A.pt"
+  modelA2B_save_path: "/home/jinwei/Cylinder3D/model/modelA2B.pt"
+  modelB2A_save_path: "/home/jinwei/Cylinder3D/model/modelB2A.pt"
   checkpoint_every_n_steps: 4599
   max_num_epochs: 40
   eval_every_n_steps: 4599

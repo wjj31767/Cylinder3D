@@ -164,18 +164,17 @@ class CycleDense(data.Dataset):
                     f['labels_1']
                 )))
             raw_data = raw_data.astype(np.float32).transpose(2,0,1).reshape(6,-1)
-            # if self.imageset == 'test':
-            #     annotated_data = np.expand_dims(np.zeros_like(raw_data[:, 0], dtype=int), axis=1)
-            # else:
-            #     annotated_data = raw_data[5,:].astype(np.int32).reshape(-1,1)
-            #     annotated_data = annotated_data & 0xFFFF  # delete high 16 digits binary
-            #     annotated_data = np.vectorize(self.learning_map.__getitem__)(annotated_data)
-            # data_tuple = (raw_data[:3,:].transpose(1,0), annotated_data.astype(np.uint8))
-            data_tuple = (raw_data[:3,:].transpose(1,0),)
+            if self.imageset == 'test':
+                annotated_data = np.expand_dims(np.zeros_like(raw_data[:, 0], dtype=int), axis=1)
+            else:
+                annotated_data = raw_data[5,:].astype(np.int32).reshape(-1,1)
+                annotated_data = annotated_data & 0xFFFF  # delete high 16 digits binary
+                annotated_data = np.vectorize(self.learning_map.__getitem__)(annotated_data)
+            data_tuple = (raw_data[:3,:].transpose(1,0), annotated_data.astype(np.uint8))
+            # data_tuple = (raw_data[:3,:].transpose(1,0),)
 
             if self.return_ref:
                 data_tuple += (raw_data[3, :].reshape(-1,1),)
-                print(len(data_tuple))
             return data_tuple
 
 @register_dataset
